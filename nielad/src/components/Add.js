@@ -1,85 +1,148 @@
-import React, {useState} from 'react'
-import uniquid from 'uniqid'
-import axios from 'axios'
-import Swal from 'sweetalert2'
+import { useState, useEffect } from "react";
 import { useNavigate } from 'react-router'
+import Swal from 'sweetalert2'
+import axios from 'axios'
+import uniquid from 'uniqid'
 import md5 from 'md5'
 
-function Adduser(){
+function Add() {
+  const initialValues = { name: "", email: "", password: "" };
+  const [formValues, setFormValues] = useState(initialValues);
+  const [formErrors, setFormErrors] = useState({});
+  const [isSubmit, setIsSubmit] = useState(false);
 
-    //Hooks
-    const[name, setName]=useState('')
-    const[email, setEmail]=useState('')
-    const[password, setPassword]=useState('')
-    
+  const nav = useNavigate()
 
-    const nav = useNavigate()
-
-    const user = {
-        name: name,
-        email: email,
-        password: md5(password),
-        id: uniquid()
-    }
-
-    function adduser(){
-
-             axios.post('/api/usuario/adduser', user)
-                .then(res => {
-                    //alert(res.data)
-                    Swal.fire({
-                        position: 'center',
-                        icon: 'success',
-                        title: 'User Created',
-                        showConfirmButton: false,
-                        timer: 1500
-                      })
-                      nav('/')
-                })
-                .then(err => {console.log(err)})
-       
-    }
-
-
-
-    return(
-        <div className="container">
-            <div className="row">
-                     <h2 className="mt-4">Create a new user</h2>               
-            </div> 
-
-             <div className="row">
-
-            <form className='col-sm-6 offset-3'>
-            <div className="mb-3">
-                        <label htmlFor="name" className="form-label">User Name</label>
-                        <input type="text" className="form-control" required value={name} onChange={(e) => {setName(e.target.value)}}></input>
-                     </div>
-
-                     <div className="mb-3">
-                        <label htmlFor="email" className="form-label">Email</label>
-                        <input type="email" className="form-control" required value={email} onChange={(e) => {setEmail(e.target.value)}}></input>
-                     </div>
-
-                     <div className="mb-3">
-                        <label htmlFor="password" className="form-label">Password</label>
-                        <input type="password" className="form-control" required value={password} onChange={(e) => {setPassword(e.target.value)}}></input>
-                     </div>
-
-                     <button onClick={()=>adduser()} className="btn btn-success">Create</button>
-                     <center>
-                  <p className="text-white mt-4">Have an account?</p>
-                  <h6><a className="text-info" href="http://localhost:3000/">Login here</a></h6>
-                </center>
-                
-                 </form>
-
-
-
-                
-            </div>          
-        </div>
-    )
+  const user = {
+    name: formValues.name,
+    email: formValues.email,
+    password: md5(formValues.password),
+    id: uniquid()
 }
 
-export default Adduser
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormErrors(validate(formValues));
+    setIsSubmit(true);
+
+  };
+
+
+ 
+
+  useEffect(() => {
+    console.log(formErrors);
+    
+  }, [formErrors]);
+
+  function adduser(){
+
+    
+
+    axios.post('/api/usuario/adduser', user)
+       .then(res => {
+           //alert(res.data)
+           Swal.fire({
+               position: 'center',
+               icon: 'success',
+               title: 'User Created',
+               showConfirmButton: false,
+               timer: 1500
+             })
+             nav('/')      
+       })
+       .then(err => {console.log(err)})
+    
+
+}
+
+  
+  const validate = (values) => {
+    const errors = {};
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+    if (!values.name) {
+      errors.name = "Username is required!";
+    }
+    if (!values.email) {
+      errors.email = "Email is required!";
+    } else if (!regex.test(values.email)) {
+      errors.email = "This is not a valid email format!";
+    }
+    if (!values.password) {
+      errors.password = "Password is required";
+    } else if (values.password.length < 4) {
+      errors.password = "Password must be more than 4 characters";
+    } else if (values.password.length > 10) {
+      errors.password = "Password cannot exceed more than 10 characters";
+    }
+    return errors;
+  }
+
+  
+
+
+  return (
+    <div className="container">
+      <div className="row">
+        <h2 className="mt-4">Create a new user</h2>
+      </div>
+
+      <div className="row">
+        <form onSubmit={handleSubmit} className="col-sm-6 offset-3">
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              User Name
+            </label>
+            <input
+              className="form-control"
+              type="text"
+              name="name"
+              placeholder="name"
+              value={formValues.name}
+              onChange={handleChange}
+            ></input>
+          </div>
+          <p className="text-danger">{formErrors.name}</p>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              User Name
+            </label>
+            <input
+              className="form-control"
+              type="text"
+              name="email"
+              placeholder="Email"
+              value={formValues.email}
+              onChange={handleChange}
+            ></input>
+          </div>
+          <p className="text-danger">{formErrors.email}</p>
+          <div className="mb-3">
+            <label htmlFor="name" className="form-label">
+              User Name
+            </label>
+            <input
+              className="form-control"
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formValues.password}
+              onChange={handleChange}
+            ></input>
+          </div>
+          <p className="text-danger">{formErrors.password}</p>
+          <button className="btn btn-success" >Create</button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+export default Add;
