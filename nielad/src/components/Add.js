@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect} from "react";
 import { useNavigate } from 'react-router'
 import Swal from 'sweetalert2'
 import axios from 'axios'
@@ -25,42 +25,32 @@ function Add() {
     setFormValues({ ...formValues, [name]: value });
   };
 
-  
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setFormErrors(validate(formValues));
-    setIsSubmit(true);
-
-  };
-
-
- 
-
   useEffect(() => {
     console.log(formErrors);
     
   }, [formErrors]);
 
-  function adduser(){
-
+  function adduser(e){
+    e.preventDefault();
+    setFormErrors(validate(formValues));  
+    setIsSubmit(true)  
     
+}
 
+function save(){
+
+  if(Object.keys(formErrors).length === 0 && isSubmit){
     axios.post('/api/usuario/adduser', user)
-       .then(res => {
-           //alert(res.data)
-           Swal.fire({
-               position: 'center',
-               icon: 'success',
-               title: 'User Created',
-               showConfirmButton: false,
-               timer: 1500
-             })
-             nav('/')      
-       })
-       .then(err => {console.log(err)})
-    
-
+  .then(
+   Swal.fire({
+    position: 'center',
+    icon: 'success',
+    title: 'User Created',
+    showConfirmButton: false
+  })          
+).then(nav(0)).then(nav('/'))
+  }
+  
 }
 
   
@@ -90,12 +80,13 @@ function Add() {
 
   return (
     <div className="container">
+   {save()}
       <div className="row">
         <h2 className="mt-4">Create a new user</h2>
       </div>
 
       <div className="row">
-        <form onSubmit={handleSubmit} className="col-sm-6 offset-3">
+        <form onSubmit={adduser} className="col-sm-6 offset-3">
           <div className="mb-3">
             <label htmlFor="name" className="form-label">
               User Name
