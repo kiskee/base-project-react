@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import AOS from "aos";
 import Select from "react-select";
+import {motion} from 'framer-motion'
 
 const Private = () => {
   const { tokenRiot } = require("./config.json");
@@ -87,7 +88,12 @@ const Private = () => {
   };
 
   return (
-    <div className="container">
+    <motion.div 
+    className="container"
+      initial={{opacity:0}}
+      animate={{opacity:1}}
+      exit={{opacity:0}}
+    >
       <h1>Sumoner Name</h1>
       <form className="col-sm-6 offset-3">
         <Select options={options} onChange={selectChange} />
@@ -111,7 +117,7 @@ const Private = () => {
         </button>
       </form>
       {id.length > 0 && render()}
-    </div>
+    </motion.div>
   );
 };
 

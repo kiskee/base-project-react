@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router'
+import {motion} from 'framer-motion'
 
 function Logout (){
    
@@ -11,7 +12,8 @@ function Logout (){
     
     return (
             <div>
-            <button onClick={()=>destroy()} className="btn btn-danger ">Logout</button>
+            <motion.button  whileHover={{ scale: 1.5 }}
+    whileTap={{ scale: 0.4 }} onClick={()=>destroy()} className="btn btn-danger ">Logout</motion.button>
           </div>
     )
 }

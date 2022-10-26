@@ -1,5 +1,6 @@
 import React from "react";
 import Logout from "./logout";
+import {motion} from 'framer-motion'
 
 const Nav = () => {
 
@@ -16,6 +17,11 @@ const Nav = () => {
 }
 
   return (
+    <motion.div
+    initial={{ width:  0 }}
+    animate={{  width:  "100%" }}
+    exit={{ width: window.innerWidth, duration: 2}}
+    >
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
         <a className="navbar-brand" href="/">
@@ -66,6 +72,7 @@ const Nav = () => {
            }
       </div>
     </nav>
+    </motion.div>
   );
 };
 

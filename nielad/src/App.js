@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import Product from "./components/Product";
 import ListaUsuarios from "./components/ListaUsuarios";
 import Private from "./components/Private";
@@ -7,6 +7,8 @@ import Nav from "./components/Nav";
 import { useState } from "react";
 import Login from './components/Login'
 import Add from './components/Add'
+import {AnimatePresence} from 'framer-motion'
+
 
 const App = () => {
   if(!window.sessionStorage.getItem('loggedAppUser')){
@@ -15,6 +17,7 @@ const App = () => {
     )
  }
 
+ const location = useLocation()
 
 
 
@@ -26,9 +29,13 @@ const App = () => {
 
   return (
     <div>
+
+     
       {Nav()}
 
-      <Routes>
+      <AnimatePresence>
+
+      <Routes location={location} key={location.pathname}>
        
         <Route
           path="/"
@@ -47,6 +54,7 @@ const App = () => {
         <Route path="/add" element={<Add />} />
         ;
       </Routes>
+      </AnimatePresence>
     </div>
   );
 };
